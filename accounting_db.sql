@@ -1,0 +1,87 @@
+-- Rafon Ledger database schema and chart of accounts
+-- Target database: MySQL 8.0+ / MariaDB 10.5+
+
+CREATE DATABASE IF NOT EXISTS accounting_db
+    CHARACTER SET utf8mb4
+    COLLATE utf8mb4_unicode_ci;
+
+USE accounting_db;
+
+CREATE TABLE IF NOT EXISTS accounts (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    code VARCHAR(20) NOT NULL,
+    title VARCHAR(150) NOT NULL,
+    category ENUM('Asset', 'Liability', 'Equity', 'Revenue', 'Expense') NOT NULL,
+    normal_balance ENUM('Debit', 'Credit') NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT uq_accounts_code UNIQUE (code),
+    CONSTRAINT uq_accounts_title UNIQUE (title)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS journal_entries (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    entry_date DATE NOT NULL,
+    reference_number VARCHAR(50) NOT NULL,
+    explanation VARCHAR(500) NOT NULL,
+    status ENUM('POSTED', 'VOID') NOT NULL DEFAULT 'POSTED',
+    created_by VARCHAR(100) NOT NULL DEFAULT 'Senior Accountant',
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT uq_journal_entries_reference UNIQUE (reference_number),
+    INDEX idx_journal_entries_date (entry_date),
+    INDEX idx_journal_entries_status (status)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS journal_lines (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    journal_entry_id BIGINT UNSIGNED NOT NULL,
+    account_id BIGINT UNSIGNED NOT NULL,
+    line_type ENUM('Debit', 'Credit') NOT NULL,
+    amount DECIMAL(15,2) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_journal_lines_entry
+        FOREIGN KEY (journal_entry_id) REFERENCES journal_entries(id)
+        ON UPDATE CASCADE ON DELETE RESTRICT,
+    CONSTRAINT fk_journal_lines_account
+        FOREIGN KEY (account_id) REFERENCES accounts(id)
+        ON UPDATE CASCADE ON DELETE RESTRICT,
+    CONSTRAINT uq_journal_entry_line_type UNIQUE (journal_entry_id, line_type),
+    CONSTRAINT chk_journal_lines_positive_amount CHECK (amount > 0),
+    INDEX idx_journal_lines_account (account_id)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS audit_logs (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_name VARCHAR(100) NOT NULL,
+    action VARCHAR(100) NOT NULL,
+    reference_number VARCHAR(50) NOT NULL,
+    details VARCHAR(500) NOT NULL,
+    status VARCHAR(30) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_audit_logs_created_at (created_at),
+    INDEX idx_audit_logs_reference (reference_number)
+) ENGINE=InnoDB;
+
+INSERT INTO accounts (code, title, category, normal_balance) VALUES
+    ('101', 'Cash on Hand & Bank', 'Asset', 'Debit'),
+    ('102', 'Accounts Receivable', 'Asset', 'Debit'),
+    ('103', 'Food & Beverage Inventory', 'Asset', 'Debit'),
+    ('104', 'Prepaid Rent & Insurance', 'Asset', 'Debit'),
+    ('151', 'Kitchen Equipment & Appliances', 'Asset', 'Debit'),
+    ('201', 'Accounts Payable', 'Liability', 'Credit'),
+    ('202', 'Utilities Payable', 'Liability', 'Credit'),
+    ('301', 'Rafon, Capital', 'Equity', 'Credit'),
+    ('302', 'Rafon, Drawing', 'Equity', 'Debit'),
+    ('401', 'Restaurant & Seafood Sales', 'Revenue', 'Credit'),
+    ('402', 'Catering Services Income', 'Revenue', 'Credit'),
+    ('501', 'Cost of Seafood & Food Ingredients', 'Expense', 'Debit'),
+    ('502', 'Salaries & Staff Wages Expense', 'Expense', 'Debit'),
+    ('503', 'Utilities & Power Expense', 'Expense', 'Debit'),
+    ('504', 'Rent Expense', 'Expense', 'Debit')
+ON DUPLICATE KEY UPDATE
+    title = VALUES(title),
+    category = VALUES(category),
+    normal_balance = VALUES(normal_balance),
+    is_active = TRUE;
+
