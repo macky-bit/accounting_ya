@@ -1,5 +1,13 @@
 <?php declare(strict_types=1); ?>
-<section id="dashboard-view" class="space-y-6">
+<section id="dashboard-view" class="hidden space-y-6">
+    <div class="section-intro">
+        <div>
+            <span class="eyebrow">Financial overview</span>
+            <h2>A clear view of the business.</h2>
+            <p>Track your restaurant's financial position and ingredient activity in one place.</p>
+        </div>
+        <div class="period-chip"><i class="fa-regular fa-calendar"></i> FY 2026</div>
+    </div>
     <!-- Summary Metrics Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
         <!-- Metric 1: Total Assets -->
@@ -58,6 +66,22 @@
                 </div>
             </div>
             <p id="dash-net-income-sub" class="text-xs font-medium mt-3 text-emerald-600">Current Operating Margin</p>
+        </div>
+    </div>
+
+    <!-- Ingredient Usage Snapshot -->
+    <div class="ingredient-panel">
+        <div class="ingredient-copy">
+            <span class="eyebrow">Kitchen intelligence</span>
+            <h2>Most used ingredients</h2>
+            <p>A quick usage snapshot for purchasing and supplier planning.</p>
+            <span class="data-note">Sample operational data</span>
+        </div>
+        <div class="ingredient-ranking">
+            <div class="ingredient-row"><span class="ingredient-rank">01</span><div><strong>Fresh seafood</strong><span>Fish, squid & shellfish</span></div><div class="usage-track"><i style="width: 92%"></i></div><b>92%</b></div>
+            <div class="ingredient-row"><span class="ingredient-rank">02</span><div><strong>Rice</strong><span>Daily kitchen stock</span></div><div class="usage-track"><i style="width: 78%"></i></div><b>78%</b></div>
+            <div class="ingredient-row"><span class="ingredient-rank">03</span><div><strong>Fresh vegetables</strong><span>Produce & aromatics</span></div><div class="usage-track"><i style="width: 65%"></i></div><b>65%</b></div>
+            <div class="ingredient-row"><span class="ingredient-rank">04</span><div><strong>Cooking oil</strong><span>Grill & fryer supply</span></div><div class="usage-track"><i style="width: 51%"></i></div><b>51%</b></div>
         </div>
     </div>
 

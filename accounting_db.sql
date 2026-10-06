@@ -64,24 +64,23 @@ CREATE TABLE IF NOT EXISTS audit_logs (
 ) ENGINE=InnoDB;
 
 INSERT INTO accounts (code, title, category, normal_balance) VALUES
-    ('101', 'Cash on Hand & Bank', 'Asset', 'Debit'),
-    ('102', 'Accounts Receivable', 'Asset', 'Debit'),
-    ('103', 'Food & Beverage Inventory', 'Asset', 'Debit'),
-    ('104', 'Prepaid Rent & Insurance', 'Asset', 'Debit'),
+    ('110', 'Cash on Hand & Bank', 'Asset', 'Debit'),
+    ('120', 'Accounts Receivable', 'Asset', 'Debit'),
+    ('130', 'Food & Beverage Inventory', 'Asset', 'Debit'),
+    ('140', 'Prepaid Rent & Insurance', 'Asset', 'Debit'),
     ('151', 'Kitchen Equipment & Appliances', 'Asset', 'Debit'),
-    ('201', 'Accounts Payable', 'Liability', 'Credit'),
-    ('202', 'Utilities Payable', 'Liability', 'Credit'),
-    ('301', 'Rafon, Capital', 'Equity', 'Credit'),
-    ('302', 'Rafon, Drawing', 'Equity', 'Debit'),
-    ('401', 'Restaurant & Seafood Sales', 'Revenue', 'Credit'),
-    ('402', 'Catering Services Income', 'Revenue', 'Credit'),
-    ('501', 'Cost of Seafood & Food Ingredients', 'Expense', 'Debit'),
-    ('502', 'Salaries & Staff Wages Expense', 'Expense', 'Debit'),
-    ('503', 'Utilities & Power Expense', 'Expense', 'Debit'),
-    ('504', 'Rent Expense', 'Expense', 'Debit')
+    ('210', 'Accounts Payable', 'Liability', 'Credit'),
+    ('220', 'Utilities Payable', 'Liability', 'Credit'),
+    ('310', 'Rafon, Capital', 'Equity', 'Credit'),
+    ('320', 'Rafon, Drawing', 'Equity', 'Debit'),
+    ('410', 'Restaurant & Seafood Sales', 'Revenue', 'Credit'),
+    ('420', 'Catering Services Income', 'Revenue', 'Credit'),
+    ('510', 'Cost of Seafood & Food Ingredients', 'Expense', 'Debit'),
+    ('520', 'Salaries & Staff Wages Expense', 'Expense', 'Debit'),
+    ('530', 'Utilities & Power Expense', 'Expense', 'Debit'),
+    ('540', 'Rent Expense', 'Expense', 'Debit')
 ON DUPLICATE KEY UPDATE
     title = VALUES(title),
     category = VALUES(category),
     normal_balance = VALUES(normal_balance),
     is_active = TRUE;
-

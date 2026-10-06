@@ -1,6 +1,9 @@
 <?php
 
 declare(strict_types=1);
+
+header('Cache-Control: no-store');
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -13,14 +16,15 @@ declare(strict_types=1);
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome CDN for visual icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Font Inter -->
+    <!-- Brand and interface fonts -->
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500;600&display=swap"
         rel="stylesheet">
 
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/layout.css">
     <link rel="stylesheet" href="css/components/accounting-table.css">
+    <link rel="stylesheet" href="css/design.css">
 </head>
 
 <body class="bg-slate-50 text-slate-800 antialiased flex h-screen overflow-hidden">
@@ -30,12 +34,32 @@ declare(strict_types=1);
 
     <div class="flex-1 flex flex-col h-screen overflow-hidden">
         <div id="header-root" class="contents"></div>
-        <main class="flex-1 overflow-y-auto p-6 bg-slate-100/60" id="content-area"></main>
+        <main class="flex-1 overflow-y-auto p-6 bg-slate-100/60" id="content-area" tabindex="-1">
+            <div id="view-loading" class="view-loading" role="status" aria-live="polite">
+                <span class="view-loading-mark"><i class="fa-solid fa-utensils"></i></span>
+                <div><strong>Preparing your workspace</strong><p>Loading restaurant and accounting components…</p></div>
+            </div>
+        </main>
     </div>
 
     <div id="modal-root" class="contents"></div>
 
-    <script type="module" src="js/main.js"></script>
+    <script type="module">
+        import('./js/main.js').catch(error => {
+            console.error(error);
+            const loading = document.getElementById('view-loading');
+            if (!loading) return;
+            loading.className = 'view-error';
+            loading.innerHTML = `
+                <span><i class="fa-solid fa-triangle-exclamation"></i></span>
+                <div>
+                    <strong>The interface could not start.</strong>
+                    <p>${error.message}</p>
+                    <button type="button" onclick="window.location.reload()">Reload components</button>
+                </div>
+            `;
+        });
+    </script>
 </body>
 
 </html>

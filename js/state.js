@@ -46,4 +46,3 @@ export async function postEntry(entry) {
     emitChange();
     return result.entry;
 }
-
