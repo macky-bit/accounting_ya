@@ -5,7 +5,10 @@
         <button id="sidebar-toggle" class="p-2 rounded-lg text-slate-600 hover:bg-slate-100 focus:outline-none transition-colors" title="Toggle Navigation Sidebar">
             <i class="fa-solid fa-bars text-lg"></i>
         </button>
-        <h1 id="page-title" class="text-xl font-bold text-slate-800 tracking-tight">Executive Dashboard</h1>
+        <div>
+            <p class="header-eyebrow">Compañero Rafon · Operations</p>
+            <h1 id="page-title" class="text-xl font-bold text-slate-800 tracking-tight">Restaurant Home</h1>
+        </div>
     </div>
 
     <div class="flex items-center space-x-3">

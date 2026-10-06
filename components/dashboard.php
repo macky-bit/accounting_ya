@@ -1,5 +1,13 @@
 <?php declare(strict_types=1); ?>
-<section id="dashboard-view" class="space-y-6">
+<section id="dashboard-view" class="hidden space-y-6">
+    <div class="section-intro">
+        <div>
+            <span class="eyebrow">Financial overview</span>
+            <h2>A clear view of the business.</h2>
+            <p>Track your restaurant's financial position and ingredient activity in one place.</p>
+        </div>
+        <div class="period-chip"><i class="fa-regular fa-calendar"></i> FY 2026</div>
+    </div>
     <!-- Summary Metrics Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
         <!-- Metric 1: Total Assets -->
@@ -58,6 +66,19 @@
                 </div>
             </div>
             <p id="dash-net-income-sub" class="text-xs font-medium mt-3 text-emerald-600">Current Operating Margin</p>
+        </div>
+    </div>
+
+    <!-- Ingredient Usage Snapshot -->
+    <div class="ingredient-panel">
+        <div class="ingredient-copy">
+            <span class="eyebrow">Kitchen intelligence</span>
+            <h2>Most used ingredients</h2>
+            <p>A quick usage snapshot for purchasing and supplier planning.</p>
+            <span id="ingredient-period" class="data-note">No usage period</span>
+        </div>
+        <div id="ingredient-ranking" class="ingredient-ranking">
+            <div class="data-empty data-empty-dark"><i class="fa-solid fa-wheat-awn"></i><strong>No ingredient usage yet</strong><p>Add records to the <code>ingredient_usage</code> table.</p></div>
         </div>
     </div>
 

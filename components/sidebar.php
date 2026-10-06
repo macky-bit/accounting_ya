@@ -19,9 +19,24 @@
         <div>
             <div class="nav-header text-[10px] font-bold text-slate-500 uppercase tracking-wider px-3 mb-2">Overview</div>
             <nav class="space-y-1">
-                <button id="nav-dashboard" data-tab="dashboard" class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-white bg-emerald-600/20 text-emerald-400 border border-emerald-500/30">
+                <button id="nav-home" data-tab="home" class="nav-item nav-active w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                    <i class="fa-solid fa-house w-5 text-center text-base"></i>
+                    <span class="nav-text truncate">Home</span>
+                </button>
+                <button id="nav-dashboard" data-tab="dashboard" class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
                     <i class="fa-solid fa-chart-pie w-5 text-center text-base"></i>
                     <span class="nav-text truncate">Dashboard</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- Supplier Contacts Group -->
+        <div>
+            <div class="nav-header text-[10px] font-bold text-slate-500 uppercase tracking-wider px-3 mb-2">Contacts</div>
+            <nav class="space-y-1">
+                <button id="nav-suppliers" data-tab="suppliers" class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                    <i class="fa-solid fa-truck-field w-5 text-center text-base"></i>
+                    <span class="nav-text truncate">Supplier List</span>
                 </button>
             </nav>
         </div>
@@ -30,11 +45,11 @@
         <div>
             <div class="nav-header text-[10px] font-bold text-slate-500 uppercase tracking-wider px-3 mb-2">Books of Accounts</div>
             <nav class="space-y-1">
-                <button id="nav-journal" data-tab="journal" class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-slate-400 hover:bg-slate-800 hover:text-slate-200">
+                <button id="nav-journal" data-tab="journal" class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
                     <i class="fa-solid fa-book w-5 text-center text-base"></i>
                     <span class="nav-text truncate">General Journal</span>
                 </button>
-                <button id="nav-ledger" data-tab="ledger" class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-slate-400 hover:bg-slate-800 hover:text-slate-200">
+                <button id="nav-ledger" data-tab="ledger" class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
                     <i class="fa-solid fa-book-open w-5 text-center text-base"></i>
                     <span class="nav-text truncate">General Ledger</span>
                 </button>
@@ -45,15 +60,15 @@
         <div>
             <div class="nav-header text-[10px] font-bold text-slate-500 uppercase tracking-wider px-3 mb-2">Financial Statements</div>
             <nav class="space-y-1">
-                <button id="nav-trial-balance" data-tab="trial-balance" class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-slate-400 hover:bg-slate-800 hover:text-slate-200">
+                <button id="nav-trial-balance" data-tab="trial-balance" class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
                     <i class="fa-solid fa-scale-balanced w-5 text-center text-base"></i>
                     <span class="nav-text truncate">Trial Balance</span>
                 </button>
-                <button id="nav-income-statement" data-tab="income-statement" class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-slate-400 hover:bg-slate-800 hover:text-slate-200">
+                <button id="nav-income-statement" data-tab="income-statement" class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
                     <i class="fa-solid fa-file-invoice-dollar w-5 text-center text-base"></i>
                     <span class="nav-text truncate">Income Statement</span>
                 </button>
-                <button id="nav-balance-sheet" data-tab="balance-sheet" class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-slate-400 hover:bg-slate-800 hover:text-slate-200">
+                <button id="nav-balance-sheet" data-tab="balance-sheet" class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
                     <i class="fa-solid fa-building-columns w-5 text-center text-base"></i>
                     <span class="nav-text truncate">Balance Sheet</span>
                 </button>
@@ -64,7 +79,7 @@
         <div>
             <div class="nav-header text-[10px] font-bold text-slate-500 uppercase tracking-wider px-3 mb-2">Security & Logs</div>
             <nav class="space-y-1">
-                <button id="nav-audit-trail" data-tab="audit-trail" class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-slate-400 hover:bg-slate-800 hover:text-slate-200">
+                <button id="nav-audit-trail" data-tab="audit-trail" class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
                     <i class="fa-solid fa-list-check w-5 text-center text-base"></i>
                     <span class="nav-text truncate">Audit Trail</span>
                 </button>

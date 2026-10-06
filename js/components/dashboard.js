@@ -1,6 +1,6 @@
 /* Executive Dashboard: metric cards + recent activity */
-import { loadTemplate } from '../loader.js';import { chartOfAccounts, journalEntries } from '../state.js';
-import { formatPHP } from '../utils.js';
+import { loadTemplate } from '../loader.js';import { chartOfAccounts, ingredientUsage, journalEntries } from '../state.js';
+import { escapeHtml, formatPHP } from '../utils.js';
 
 export async function mount(parent) {
     parent.insertAdjacentHTML('beforeend', await loadTemplate('dashboard'));
@@ -29,6 +29,25 @@ export function render() {
     });
 
     const netProfit = totalRevenue - totalExpense;
+
+    const ingredientRanking = document.getElementById('ingredient-ranking');
+    const ingredientPeriod = document.getElementById('ingredient-period');
+    if (ingredientRanking && ingredientPeriod) {
+        ingredientPeriod.textContent = ingredientUsage.length ? `Updated ${ingredientUsage[0].recordedOn}` : 'No usage period';
+        ingredientRanking.innerHTML = ingredientUsage.length
+            ? ingredientUsage.map((usage, index) => {
+                const percentage = Math.max(0, Math.min(100, Number(usage.usagePercentage) || 0));
+                return `
+                    <div class="ingredient-row">
+                        <span class="ingredient-rank">${String(index + 1).padStart(2, '0')}</span>
+                        <div><strong>${escapeHtml(usage.ingredientName)}</strong>${usage.details ? `<span>${escapeHtml(usage.details)}</span>` : ''}</div>
+                        <div class="usage-track"><i style="width: ${percentage}%"></i></div>
+                        <b>${percentage.toLocaleString('en-US', { maximumFractionDigits: 2 })}%</b>
+                    </div>
+                `;
+            }).join('')
+            : '<div class="data-empty data-empty-dark"><i class="fa-solid fa-wheat-awn"></i><strong>No ingredient usage yet</strong><p>Add records to the <code>ingredient_usage</code> table.</p></div>';
+    }
 
     document.getElementById('dash-assets').innerText = formatPHP(totalAssets);
     document.getElementById('dash-liabilities').innerText = formatPHP(totalLiabilities);

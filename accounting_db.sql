@@ -63,25 +63,81 @@ CREATE TABLE IF NOT EXISTS audit_logs (
     INDEX idx_audit_logs_reference (reference_number)
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS restaurant_services (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(150) NOT NULL,
+    description VARCHAR(500) NULL,
+    icon_name VARCHAR(60) NULL,
+    display_order INT UNSIGNED NOT NULL DEFAULT 0,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_restaurant_services_active_order (is_active, display_order)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS menu_items (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(150) NOT NULL,
+    category VARCHAR(100) NOT NULL,
+    description VARCHAR(500) NULL,
+    price DECIMAL(10,2) NOT NULL,
+    image_path VARCHAR(500) NULL,
+    display_order INT UNSIGNED NOT NULL DEFAULT 0,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT chk_menu_items_price CHECK (price >= 0),
+    INDEX idx_menu_items_active_order (is_active, display_order)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS suppliers (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(180) NOT NULL,
+    category VARCHAR(100) NOT NULL,
+    description VARCHAR(500) NULL,
+    contact_person VARCHAR(150) NULL,
+    phone VARCHAR(50) NULL,
+    email VARCHAR(190) NULL,
+    address VARCHAR(500) NULL,
+    is_primary BOOLEAN NOT NULL DEFAULT FALSE,
+    status ENUM('ACTIVE', 'INACTIVE') NOT NULL DEFAULT 'ACTIVE',
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_suppliers_status_category (status, category)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS ingredient_usage (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    ingredient_name VARCHAR(150) NOT NULL,
+    details VARCHAR(255) NULL,
+    usage_percentage DECIMAL(5,2) NOT NULL,
+    recorded_on DATE NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT chk_ingredient_usage_percentage CHECK (usage_percentage >= 0 AND usage_percentage <= 100),
+    INDEX idx_ingredient_usage_active_date (is_active, recorded_on),
+    INDEX idx_ingredient_usage_percentage (usage_percentage)
+) ENGINE=InnoDB;
+
 INSERT INTO accounts (code, title, category, normal_balance) VALUES
-    ('101', 'Cash on Hand & Bank', 'Asset', 'Debit'),
-    ('102', 'Accounts Receivable', 'Asset', 'Debit'),
-    ('103', 'Food & Beverage Inventory', 'Asset', 'Debit'),
-    ('104', 'Prepaid Rent & Insurance', 'Asset', 'Debit'),
+    ('110', 'Cash on Hand & Bank', 'Asset', 'Debit'),
+    ('120', 'Accounts Receivable', 'Asset', 'Debit'),
+    ('130', 'Food & Beverage Inventory', 'Asset', 'Debit'),
+    ('140', 'Prepaid Rent & Insurance', 'Asset', 'Debit'),
     ('151', 'Kitchen Equipment & Appliances', 'Asset', 'Debit'),
-    ('201', 'Accounts Payable', 'Liability', 'Credit'),
-    ('202', 'Utilities Payable', 'Liability', 'Credit'),
-    ('301', 'Rafon, Capital', 'Equity', 'Credit'),
-    ('302', 'Rafon, Drawing', 'Equity', 'Debit'),
-    ('401', 'Restaurant & Seafood Sales', 'Revenue', 'Credit'),
-    ('402', 'Catering Services Income', 'Revenue', 'Credit'),
-    ('501', 'Cost of Seafood & Food Ingredients', 'Expense', 'Debit'),
-    ('502', 'Salaries & Staff Wages Expense', 'Expense', 'Debit'),
-    ('503', 'Utilities & Power Expense', 'Expense', 'Debit'),
-    ('504', 'Rent Expense', 'Expense', 'Debit')
+    ('210', 'Accounts Payable', 'Liability', 'Credit'),
+    ('220', 'Utilities Payable', 'Liability', 'Credit'),
+    ('310', 'Rafon, Capital', 'Equity', 'Credit'),
+    ('320', 'Rafon, Drawing', 'Equity', 'Debit'),
+    ('410', 'Restaurant & Seafood Sales', 'Revenue', 'Credit'),
+    ('420', 'Catering Services Income', 'Revenue', 'Credit'),
+    ('510', 'Cost of Seafood & Food Ingredients', 'Expense', 'Debit'),
+    ('520', 'Salaries & Staff Wages Expense', 'Expense', 'Debit'),
+    ('530', 'Utilities & Power Expense', 'Expense', 'Debit'),
+    ('540', 'Rent Expense', 'Expense', 'Debit')
 ON DUPLICATE KEY UPDATE
     title = VALUES(title),
     category = VALUES(category),
     normal_balance = VALUES(normal_balance),
     is_active = TRUE;
-
