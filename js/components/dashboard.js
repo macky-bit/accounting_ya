@@ -1,67 +1,237 @@
 /* Executive Dashboard: metric cards + recent activity */
-import { loadTemplate } from '../loader.js';import { chartOfAccounts, journalEntries } from '../state.js';
-import { formatPHP } from '../utils.js';
+import { loadTemplate } from '../loader.js';
+import {
+    cateringEvents,
+    chartOfAccounts,
+    deleteCateringEvent,
+    journalEntries,
+    saveCateringEvent
+} from '../state.js';
+import { escapeHTML, formatPHP } from '../utils.js';
 
 export async function mount(parent) {
     parent.insertAdjacentHTML('beforeend', await loadTemplate('dashboard'));
 }
 
-// 6. Render Executive Dashboard
-export function render() {
-    let totalAssets = 0;
-    let totalLiabilities = 0;
-    let totalEquity = 0;
-    let totalRevenue = 0;
-    let totalExpense = 0;
-
-    chartOfAccounts.forEach(acc => {
-        let dr = 0, cr = 0;
-        journalEntries.forEach(e => {
-            if (e.debitAcc === acc.title) dr += e.debitAmount;
-            if (e.creditAcc === acc.title) cr += e.creditAmount;
+function accountTotals() {
+    return chartOfAccounts.map(account => {
+        let debit = 0;
+        let credit = 0;
+        journalEntries.forEach(entry => {
+            if (entry.debitAcc === account.title) debit += Number(entry.debitAmount) || 0;
+            if (entry.creditAcc === account.title) credit += Number(entry.creditAmount) || 0;
         });
-
-        if (acc.category === 'Asset') totalAssets += (dr - cr);
-        if (acc.category === 'Liability') totalLiabilities += (cr - dr);
-        if (acc.category === 'Equity') totalEquity += (cr - dr);
-        if (acc.category === 'Revenue') totalRevenue += (cr - dr);
-        if (acc.category === 'Expense') totalExpense += (dr - cr);
+        const balance = ['Asset', 'Expense'].includes(account.category) ? debit - credit : credit - debit;
+        return { ...account, debit, credit, balance };
     });
+}
 
-    const netProfit = totalRevenue - totalExpense;
+function setMoney(id, amount, trackNegative = false) {
+    const element = document.getElementById(id);
+    if (!element) return;
+    element.textContent = formatPHP(amount);
+    element.classList.toggle('negative-value', trackNegative && amount < 0);
+}
 
-    document.getElementById('dash-assets').innerText = formatPHP(totalAssets);
-    document.getElementById('dash-liabilities').innerText = formatPHP(totalLiabilities);
-    document.getElementById('dash-equity').innerText = formatPHP(totalEquity + netProfit);
+function renderFinancialSummary(totals) {
+    const sumCategory = category => totals
+        .filter(item => item.category === category)
+        .reduce((sum, item) => sum + item.balance, 0);
+    const revenue = sumCategory('Revenue');
+    const expenses = sumCategory('Expense');
+    const receivables = totals.find(item => item.title === 'Accounts Receivable')
+        || totals.find(item => ['102', '120'].includes(String(item.code)));
+    const cash = totals.find(item => item.title === 'Cash on Hand & Bank')
+        || totals.find(item => ['101', '110'].includes(String(item.code)));
 
-    const netEl = document.getElementById('dash-net-income');
-    netEl.innerText = formatPHP(netProfit);
-    if (netProfit < 0) {
-        netEl.className = "text-2xl font-bold text-red-600 mono mt-2";
-    } else {
-        netEl.className = "text-2xl font-bold text-emerald-600 mono mt-2";
+    setMoney('dash-revenue', revenue);
+    setMoney('dash-expenses', expenses);
+    setMoney('dash-net-income', revenue - expenses, true);
+    setMoney('dash-receivables', receivables?.balance || 0);
+    setMoney('dash-cash-balance', cash?.balance || 0);
+    setMoney('dash-cash-received', cash?.debit || 0);
+    setMoney('dash-cash-paid', cash?.credit || 0);
+    setMoney('dash-net-cash', (cash?.debit || 0) - (cash?.credit || 0), true);
+}
+
+function renderExpenseBreakdown(totals) {
+    const container = document.getElementById('expense-breakdown');
+    if (!container) return;
+    const expenses = totals
+        .filter(item => item.category === 'Expense' && item.balance > 0)
+        .sort((a, b) => b.balance - a.balance);
+    const maximum = Math.max(...expenses.map(item => item.balance), 0);
+
+    if (!expenses.length) {
+        container.innerHTML = '<p class="dashboard-empty-state">No posted expense entries yet.</p>';
+        return;
     }
 
-    // Populate Recent Transactions Table
-    const recentTable = document.getElementById('dash-recent-table');
-    recentTable.innerHTML = '';
+    container.innerHTML = expenses.map((item, index) => `
+        <div class="expense-row" role="listitem">
+            <span class="expense-rank">${String(index + 1).padStart(2, '0')}</span>
+            <div class="expense-detail">
+                <div><strong>${escapeHTML(item.title)}</strong><span>${formatPHP(item.balance)}</span></div>
+                <div class="expense-track" aria-hidden="true"><i style="width:${(item.balance / maximum) * 100}%"></i></div>
+            </div>
+        </div>
+    `).join('');
+}
 
-    const recentEntries = [...journalEntries].reverse().slice(0, 5);
-    if (!recentEntries.length) {
-        recentTable.innerHTML = '<tr><td colspan="5" class="empty-state">No entries yet. Use Post Entry to record your first transaction.</td></tr>';
+function eventStatusClass(status) {
+    return `event-status event-status-${String(status).toLowerCase()}`;
+}
+
+function renderCateringEvents() {
+    const activeEvents = cateringEvents.filter(event => event.status !== 'Cancelled');
+    const now = new Date();
+    const thisMonth = activeEvents.filter(event => {
+        const date = new Date(`${event.eventDate}T00:00:00`);
+        return date.getFullYear() === now.getFullYear() && date.getMonth() === now.getMonth();
+    });
+    const revenue = activeEvents.reduce((sum, event) => sum + Number(event.totalRevenue || 0), 0);
+    const unpaid = activeEvents
+        .filter(event => event.status === 'Upcoming')
+        .reduce((sum, event) => sum + Math.max(Number(event.totalRevenue || 0) - Number(event.amountPaid || 0), 0), 0);
+    const packages = new Map();
+    activeEvents.forEach(event => {
+        const profit = Number(event.totalRevenue || 0) - Number(event.estimatedCost || 0);
+        packages.set(event.packageName, (packages.get(event.packageName) || 0) + profit);
+    });
+    const topPackage = [...packages.entries()].sort((a, b) => b[1] - a[1])[0];
+
+    document.getElementById('event-month-count').textContent = String(thisMonth.length);
+    setMoney('event-total-revenue', revenue);
+    setMoney('event-unpaid-balance', unpaid);
+    document.getElementById('event-top-package').textContent = topPackage ? topPackage[0] : 'No data yet';
+
+    const table = document.getElementById('catering-events-table');
+    if (!cateringEvents.length) {
+        table.innerHTML = '<tr><td colspan="7" class="dashboard-empty-state">No catering events yet. Add the first user-entered event.</td></tr>';
+        return;
     }
-    recentEntries.forEach(e => {
-        recentTable.innerHTML += `
-            <tr class="hover:bg-slate-50 transition-colors">
-                <td class="py-3 px-4 font-medium text-xs text-slate-500">${e.date}</td>
-                <td class="py-3 px-4 font-semibold text-slate-800">
-                    ${e.debitAcc} <span class="text-slate-400 font-normal">/</span> ${e.creditAcc}
-                    <div class="text-xs text-slate-600 font-normal italic">${e.explanation}</div>
-                </td>
-                <td class="py-3 px-4 font-mono text-xs text-slate-500">${e.ref}</td>
-                <td class="py-3 px-4 text-right mono font-medium text-emerald-600">${formatPHP(e.debitAmount)}</td>
-                <td class="py-3 px-4 text-right mono font-medium text-red-600">${formatPHP(e.creditAmount)}</td>
-            </tr>
-        `;
+
+    table.innerHTML = cateringEvents.map(event => {
+        const profit = Number(event.totalRevenue) - Number(event.estimatedCost);
+        return `<tr>
+            <td><strong>${escapeHTML(event.eventName)}</strong><small>${escapeHTML(event.clientName)}</small></td>
+            <td>${escapeHTML(event.eventDate)}</td>
+            <td>${escapeHTML(event.packageName)}</td>
+            <td><span class="${eventStatusClass(event.status)}">${escapeHTML(event.status)}</span></td>
+            <td class="amount-column mono">${formatPHP(event.totalRevenue)}</td>
+            <td class="amount-column mono ${profit < 0 ? 'negative-value' : ''}">${formatPHP(profit)}</td>
+            <td><div class="event-row-actions"><button type="button" data-action="edit-event" data-id="${event.id}" aria-label="Edit ${escapeHTML(event.eventName)}"><i class="fa-solid fa-pen"></i></button><button type="button" data-action="delete-event" data-id="${event.id}" aria-label="Delete ${escapeHTML(event.eventName)}"><i class="fa-solid fa-trash"></i></button></div></td>
+        </tr>`;
+    }).join('');
+}
+
+function renderRecentEntries() {
+    const table = document.getElementById('dash-recent-table');
+    if (!table) return;
+    const entries = [...journalEntries].reverse().slice(0, 5);
+    if (!entries.length) {
+        table.innerHTML = '<tr><td colspan="5" class="dashboard-empty-state">No entries yet. Use Post Entry to record your first transaction.</td></tr>';
+        return;
+    }
+    table.innerHTML = entries.map(entry => `<tr>
+        <td class="py-3 px-4">${escapeHTML(entry.date)}</td>
+        <td class="py-3 px-4"><strong>${escapeHTML(entry.debitAcc)} / ${escapeHTML(entry.creditAcc)}</strong><small class="dashboard-table-note">${escapeHTML(entry.explanation)}</small></td>
+        <td class="py-3 px-4 mono">${escapeHTML(entry.ref)}</td>
+        <td class="py-3 px-4 amount-column mono">${formatPHP(entry.debitAmount)}</td>
+        <td class="py-3 px-4 amount-column mono">${formatPHP(entry.creditAmount)}</td>
+    </tr>`).join('');
+}
+
+export function render() {
+    const totals = accountTotals();
+    renderFinancialSummary(totals);
+    renderExpenseBreakdown(totals);
+    renderCateringEvents();
+    renderRecentEntries();
+}
+
+function todayValue() {
+    const date = new Date();
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
+function openEventModal(event = null) {
+    document.getElementById('catering-event-form').reset();
+    document.getElementById('catering-event-error').classList.add('hidden');
+    document.getElementById('event-id').value = event?.id || '';
+    document.getElementById('event-name').value = event?.eventName || '';
+    document.getElementById('event-client').value = event?.clientName || '';
+    document.getElementById('event-package').value = event?.packageName || '';
+    document.getElementById('event-date').value = event?.eventDate || todayValue();
+    document.getElementById('event-status').value = event?.status || 'Upcoming';
+    document.getElementById('event-revenue').value = event?.totalRevenue ?? 0;
+    document.getElementById('event-cost').value = event?.estimatedCost ?? 0;
+    document.getElementById('event-paid').value = event?.amountPaid ?? 0;
+    document.getElementById('event-notes').value = event?.notes || '';
+    document.getElementById('catering-event-modal-title').textContent = event ? 'Edit catering event' : 'Add catering event';
+    document.getElementById('catering-event-modal').showModal();
+    document.getElementById('event-name').focus();
+}
+
+function closeEventModal() {
+    document.getElementById('catering-event-modal').close();
+}
+
+async function handleEventSubmit(submitEvent) {
+    submitEvent.preventDefault();
+    const error = document.getElementById('catering-event-error');
+    error.classList.add('hidden');
+    const id = Number(document.getElementById('event-id').value) || null;
+    const event = {
+        eventName: document.getElementById('event-name').value,
+        clientName: document.getElementById('event-client').value,
+        packageName: document.getElementById('event-package').value,
+        eventDate: document.getElementById('event-date').value,
+        status: document.getElementById('event-status').value,
+        totalRevenue: Number(document.getElementById('event-revenue').value),
+        estimatedCost: Number(document.getElementById('event-cost').value),
+        amountPaid: Number(document.getElementById('event-paid').value),
+        notes: document.getElementById('event-notes').value
+    };
+    const button = submitEvent.submitter;
+    if (button) button.disabled = true;
+    try {
+        await saveCateringEvent(event, id);
+        closeEventModal();
+    } catch (requestError) {
+        error.textContent = `Could not save the event: ${requestError.message}`;
+        error.classList.remove('hidden');
+    } finally {
+        if (button) button.disabled = false;
+    }
+}
+
+async function handleEventTableClick(clickEvent) {
+    const button = clickEvent.target.closest('[data-action]');
+    if (!button) return;
+    const id = Number(button.dataset.id);
+    const event = cateringEvents.find(item => item.id === id);
+    if (!event) return;
+    if (button.dataset.action === 'edit-event') {
+        openEventModal(event);
+        return;
+    }
+    if (!window.confirm(`Delete the catering event "${event.eventName}"?`)) return;
+    button.disabled = true;
+    try {
+        await deleteCateringEvent(id);
+    } catch (error) {
+        window.alert(`Could not delete the event: ${error.message}`);
+        button.disabled = false;
+    }
+}
+
+export function bindEvents() {
+    document.getElementById('add-catering-event').addEventListener('click', () => openEventModal());
+    document.querySelectorAll('.js-close-event-modal').forEach(button => button.addEventListener('click', closeEventModal));
+    document.getElementById('catering-event-form').addEventListener('submit', handleEventSubmit);
+    document.getElementById('catering-events-table').addEventListener('click', handleEventTableClick);
+    document.getElementById('catering-event-modal').addEventListener('click', event => {
+        if (event.target === event.currentTarget) closeEventModal();
     });
 }

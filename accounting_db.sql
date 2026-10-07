@@ -63,6 +63,66 @@ CREATE TABLE IF NOT EXISTS audit_logs (
     INDEX idx_audit_logs_reference (reference_number)
 ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS catering_events (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    event_name VARCHAR(150) NOT NULL,
+    client_name VARCHAR(150) NOT NULL,
+    package_name VARCHAR(120) NOT NULL,
+    event_date DATE NOT NULL,
+    status ENUM('Upcoming', 'Completed', 'Cancelled') NOT NULL DEFAULT 'Upcoming',
+    total_revenue DECIMAL(15,2) NOT NULL DEFAULT 0.00,
+    estimated_cost DECIMAL(15,2) NOT NULL DEFAULT 0.00,
+    amount_paid DECIMAL(15,2) NOT NULL DEFAULT 0.00,
+    notes VARCHAR(500) NULL,
+    created_by VARCHAR(100) NOT NULL DEFAULT 'System User',
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT chk_catering_revenue_nonnegative
+        CHECK (total_revenue >= 0),
+    CONSTRAINT chk_catering_cost_nonnegative
+        CHECK (estimated_cost >= 0),
+    CONSTRAINT chk_catering_paid_nonnegative
+        CHECK (amount_paid >= 0),
+
+    INDEX idx_catering_events_date (event_date),
+    INDEX idx_catering_events_status (status),
+    INDEX idx_catering_events_package (package_name)
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS suppliers (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    business_name VARCHAR(150) NOT NULL,
+    category VARCHAR(100) NOT NULL,
+    contact_person VARCHAR(150) NULL,
+    phone VARCHAR(50) NULL,
+    email VARCHAR(190) NULL,
+    address VARCHAR(300) NULL,
+    products_supplied VARCHAR(500) NULL,
+    delivery_days VARCHAR(150) NULL,
+    lead_time_days SMALLINT UNSIGNED NULL,
+    minimum_order DECIMAL(15,2) NOT NULL DEFAULT 0.00,
+    is_preferred BOOLEAN NOT NULL DEFAULT FALSE,
+    status ENUM('Active', 'Inactive') NOT NULL DEFAULT 'Active',
+    notes VARCHAR(1000) NULL,
+    created_by VARCHAR(100) NOT NULL DEFAULT 'System User',
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    archived_at TIMESTAMP NULL DEFAULT NULL,
+
+    CONSTRAINT chk_suppliers_minimum_order_nonnegative
+        CHECK (minimum_order >= 0),
+
+    INDEX idx_suppliers_business_name (business_name),
+    INDEX idx_suppliers_category (category),
+    INDEX idx_suppliers_status (status),
+    INDEX idx_suppliers_preferred (is_preferred)
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_unicode_ci;
+
 INSERT INTO accounts (code, title, category, normal_balance) VALUES
     ('110', 'Cash on Hand & Bank', 'Asset', 'Debit'),
     ('120', 'Accounts Receivable', 'Asset', 'Debit'),

@@ -21,10 +21,10 @@
         <div>
             <div class="nav-header text-[10px] font-bold text-slate-500 uppercase tracking-wider px-3 mb-2">Overview</div>
             <nav class="space-y-1">
-                <button id="nav-home" aria-current="page" data-tab="home" class="nav-item nav-active w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+                <!-- <button id="nav-home" aria-current="page" data-tab="home" class="nav-item nav-active w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
                     <i class="fa-solid fa-house w-5 text-center text-base"></i>
                     <span class="nav-text truncate">Home</span>
-                </button>
+                </button> -->
                 <button id="nav-dashboard" data-tab="dashboard" class="nav-item w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
                     <i class="fa-solid fa-chart-pie w-5 text-center text-base"></i>
                     <span class="nav-text truncate">Dashboard</span>

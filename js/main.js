@@ -17,6 +17,7 @@ import * as postModal from './components/postModal.js';
 
 // Refresh all accounting views & data dependencies
 function refreshAllViews() {
+    suppliers.render();
     journal.render();
     ledger.render();
     trialBalance.render();
@@ -48,6 +49,8 @@ async function init() {
     initNavigation();
     sidebar.bindEvents();
     header.bindEvents({ onNewEntry: postModal.openModal });
+    dashboard.bindEvents();
+    suppliers.bindEvents();
     journal.bindEvents();
     ledger.bindEvents();
     postModal.bindEvents();
