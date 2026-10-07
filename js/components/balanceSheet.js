@@ -80,12 +80,12 @@ export function render() {
         }
     });
 
-    // Append Retained Earnings / Current Period Net Income to Equity
+    // Append Retained Earnings / Net income from recorded entries to Equity
     if (netIncome !== 0) {
         totalEquity += netIncome;
         equityList.innerHTML += `
             <div class="flex justify-between items-center text-emerald-700 font-medium">
-                <span>Current Period Net Income</span>
+                <span>Net income from recorded entries</span>
                 <span class="mono">${formatPHP(netIncome)}</span>
             </div>
         `;
@@ -95,4 +95,8 @@ export function render() {
     document.getElementById('bs-total-liabilities').innerText = formatPHP(totalLiabilities);
     document.getElementById('bs-total-equity').innerText = formatPHP(totalEquity);
     document.getElementById('bs-total-liab-equity').innerText = formatPHP(totalLiabilities + totalEquity);
+    for (const list of [assetList, liabList, equityList]) {
+        if (!list.children.length) list.innerHTML = '<p class="text-slate-500">No balances recorded.</p>';
+    }
+
 }

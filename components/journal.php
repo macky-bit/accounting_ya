@@ -9,7 +9,7 @@
             <div class="flex items-center space-x-3">
                 <button id="print-journal-button" class="px-3 py-1.5 border border-slate-300 text-slate-700 hover:bg-slate-50 rounded-lg text-xs font-medium flex items-center space-x-1.5">
                     <i class="fa-solid fa-print"></i>
-                    <span>Print Ledger</span>
+                    <span>Print Journal</span>
                 </button>
             </div>
         </div>

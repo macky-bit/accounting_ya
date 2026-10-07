@@ -58,4 +58,6 @@ export function render() {
         `;
         tbody.appendChild(expRow);
     });
+    if (!tbody.children.length) tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No journal entries yet. Use Post Entry to record a transaction.</td></tr>';
+
 }

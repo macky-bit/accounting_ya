@@ -4,7 +4,7 @@
         <div class="text-center pb-6 border-b border-slate-200">
             <h2 class="text-xl font-bold text-slate-900 uppercase tracking-wide">Compañero Rafon Resto Grill & Seafoods</h2>
             <h3 class="text-md font-semibold text-emerald-700 uppercase mt-1">Income Statement</h3>
-            <p class="text-xs text-slate-500 mt-1">For Period Ending FY 2026</p>
+            <p class="text-xs text-slate-500 mt-1">All recorded journal entries</p>
         </div>
 
         <div class="mt-6 space-y-6 text-sm">
@@ -36,7 +36,7 @@
             <div class="bg-slate-50 p-4 rounded-xl border-2 border-slate-800 flex justify-between items-center">
                 <div>
                     <span id="is-net-title" class="text-base font-bold text-slate-900 uppercase">Net Profit / Income</span>
-                    <p class="text-xs text-slate-500">Transferred to Owner's Equity</p>
+                    <p class="text-xs text-slate-500">Included in the equity summary</p>
                 </div>
                 <span id="is-net-amount" class="text-xl font-extrabold mono text-emerald-600">₱ 0.00</span>
             </div>

@@ -64,4 +64,6 @@ export function render() {
     document.getElementById('tb-total-debit-c').innerText = totalDr.cents;
     document.getElementById('tb-total-credit-p').innerText = totalCr.pesos;
     document.getElementById('tb-total-credit-c').innerText = totalCr.cents;
+    if (!tbody.children.length) tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No posted balances yet. Record a transaction to build your trial balance.</td></tr>';
+
 }

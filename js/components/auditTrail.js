@@ -23,4 +23,6 @@ export function render() {
             </tr>
         `;
     });
+    if (!tbody.children.length) tbody.innerHTML = '<tr><td colspan="5" class="empty-state">No accounting activity has been recorded yet.</td></tr>';
+
 }

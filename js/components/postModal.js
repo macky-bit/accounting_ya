@@ -23,13 +23,13 @@ export function populateOptions() {
 
 export function openModal() {
     populateOptions();
-    document.getElementById('entry-date').value = new Date().toISOString().split('T')[0];
-    document.getElementById('post-modal').classList.remove('hidden');
+    const today = new Date();
+    document.getElementById('entry-date').value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    document.getElementById('post-modal').showModal();
 }
 
 export function closeModal() {
-    document.getElementById('post-modal').classList.add('hidden');
-    document.getElementById('entry-form').reset();
+    document.getElementById('post-modal').close();
 }
 
 async function handlePostEntry(event) {
@@ -43,9 +43,13 @@ async function handlePostEntry(event) {
     const creditAmount = parseFloat(document.getElementById('entry-credit-amount').value);
     const explanation = document.getElementById('entry-explanation').value;
 
+    const errorMessage = document.getElementById('entry-error');
+    errorMessage.classList.add('hidden');
+
     // Accounting Balance Validation Rule
     if (debitAmount !== creditAmount) {
-        alert("Accounting Rule Violation: Debit total must strictly equal Credit total!");
+        errorMessage.textContent = 'Debit and credit amounts must be equal.';
+        errorMessage.classList.remove('hidden');
         return;
     }
 
@@ -70,13 +74,19 @@ async function handlePostEntry(event) {
         await postEntry(newEntry);
         closeModal();
     } catch (error) {
-        alert(`Could not post the transaction: ${error.message}`);
+        errorMessage.textContent = `Could not post the transaction: ${error.message}`;
+        errorMessage.classList.remove('hidden');
     } finally {
         if (submitButton) submitButton.disabled = false;
     }
 }
 
 export function bindEvents() {
+    document.getElementById('post-modal').addEventListener('close', () => {
+        document.getElementById('entry-form').reset();
+        document.getElementById('entry-error').classList.add('hidden');
+        document.getElementById('new-entry-button').focus();
+    });
     document.querySelectorAll('.js-close-modal').forEach(button => {
         button.addEventListener('click', closeModal);
     });

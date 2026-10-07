@@ -47,13 +47,16 @@ export function render() {
     recentTable.innerHTML = '';
 
     const recentEntries = [...journalEntries].reverse().slice(0, 5);
+    if (!recentEntries.length) {
+        recentTable.innerHTML = '<tr><td colspan="5" class="empty-state">No entries yet. Use Post Entry to record your first transaction.</td></tr>';
+    }
     recentEntries.forEach(e => {
         recentTable.innerHTML += `
             <tr class="hover:bg-slate-50 transition-colors">
                 <td class="py-3 px-4 font-medium text-xs text-slate-500">${e.date}</td>
                 <td class="py-3 px-4 font-semibold text-slate-800">
                     ${e.debitAcc} <span class="text-slate-400 font-normal">/</span> ${e.creditAcc}
-                    <div class="text-[10px] text-slate-400 font-normal italic">${e.explanation}</div>
+                    <div class="text-xs text-slate-600 font-normal italic">${e.explanation}</div>
                 </td>
                 <td class="py-3 px-4 font-mono text-xs text-slate-500">${e.ref}</td>
                 <td class="py-3 px-4 text-right mono font-medium text-emerald-600">${formatPHP(e.debitAmount)}</td>

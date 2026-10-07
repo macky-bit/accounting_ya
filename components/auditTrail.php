@@ -3,7 +3,7 @@
     <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
         <div class="pb-4 border-b border-slate-200">
             <h2 class="text-xl font-bold text-slate-900">System Audit Trail</h2>
-            <p class="text-xs text-slate-500">Timestamped immutability system logs for regulatory compliance</p>
+            <p class="text-xs text-slate-500">Timestamped record of posted accounting transactions</p>
         </div>
 
         <div class="mt-6 overflow-x-auto">

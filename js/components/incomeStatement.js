@@ -68,4 +68,7 @@ export function render() {
         netAmountEl.innerText = formatPHP(netIncome);
         netAmountEl.className = "text-xl font-extrabold mono text-red-600";
     }
+    if (!revList.children.length) revList.innerHTML = '<p class="text-slate-500">No revenue balances recorded.</p>';
+    if (!expList.children.length) expList.innerHTML = '<p class="text-slate-500">No expense balances recorded.</p>';
+
 }

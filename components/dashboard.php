@@ -6,7 +6,7 @@
             <h2>A clear view of the business.</h2>
             <p>Track your restaurant's financial position and ingredient activity in one place.</p>
         </div>
-        <div class="period-chip"><i class="fa-regular fa-calendar"></i> FY 2026</div>
+        <div class="period-chip"><i class="fa-regular fa-calendar"></i> All recorded entries</div>
     </div>
     <!-- Summary Metrics Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -22,7 +22,7 @@
                 </div>
             </div>
             <p class="text-xs text-emerald-600 mt-3 font-medium flex items-center">
-                <i class="fa-solid fa-arrow-up text-[10px] mr-1"></i> Balance Verified
+                <i class="fa-solid fa-book text-[10px] mr-1"></i> Recorded asset balance
             </p>
         </div>
 
@@ -65,17 +65,17 @@
                     <i class="fa-solid fa-coins text-xl"></i>
                 </div>
             </div>
-            <p id="dash-net-income-sub" class="text-xs font-medium mt-3 text-emerald-600">Current Operating Margin</p>
+            <p id="dash-net-income-sub" class="text-xs font-medium mt-3 text-emerald-600">Revenue less expenses</p>
         </div>
     </div>
 
     <!-- Ingredient Usage Snapshot -->
     <div class="ingredient-panel">
         <div class="ingredient-copy">
-            <span class="eyebrow">Kitchen intelligence</span>
-            <h2>Most used ingredients</h2>
-            <p>A quick usage snapshot for purchasing and supplier planning.</p>
-            <span class="data-note">Sample operational data</span>
+            <span class="eyebrow">Example only</span>
+            <h2>Ingredient usage example</h2>
+            <p>Illustrative percentages, not calculated from your accounting records.</p>
+            <span class="data-note">Demo data - not live</span>
         </div>
         <div class="ingredient-ranking">
             <div class="ingredient-row"><span class="ingredient-rank">01</span><div><strong>Fresh seafood</strong><span>Fish, squid & shellfish</span></div><div class="usage-track"><i style="width: 92%"></i></div><b>92%</b></div>

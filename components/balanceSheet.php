@@ -4,7 +4,7 @@
         <div class="text-center pb-6 border-b border-slate-200">
             <h2 class="text-xl font-bold text-slate-900 uppercase tracking-wide">Compañero Rafon Resto Grill & Seafoods</h2>
             <h3 class="text-md font-semibold text-emerald-700 uppercase mt-1">Statement of Financial Position (Balance Sheet)</h3>
-            <p class="text-xs text-slate-500 mt-1">As of Current Date</p>
+            <p class="text-xs text-slate-500 mt-1">Based on all recorded journal entries</p>
         </div>
 
         <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-8 text-sm">

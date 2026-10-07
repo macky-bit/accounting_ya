@@ -7,6 +7,10 @@ export function switchTab(tabId) {
     tabs.forEach(tab => {
         const viewSection = document.getElementById(`${tab}-view`);
         const navBtn = document.getElementById(`nav-${tab}`);
+        if (navBtn) {
+            if (tab === tabId) navBtn.setAttribute('aria-current', 'page');
+            else navBtn.removeAttribute('aria-current');
+        }
 
         if (tab === tabId) {
             viewSection.classList.remove('hidden');
